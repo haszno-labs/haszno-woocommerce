@@ -1,46 +1,50 @@
 # Haszno Összekötő — WooCommerce Plugin
 
-> _Összeköti a WooCommerce webáruházat a [Haszno](https://haszno.hu) dropshipping platformmal._
+**English** | [Magyar](README.hu.md)
 
-A **Haszno Összekötő** WordPress bővítmény egyetlen kapcsolódási kóddal csatlakoztatja a WooCommerce webáruházat a Haszno dropshipping-rendszerhez:
+> _Connects a WooCommerce store to the [Haszno](https://haszno.hu) dropshipping platform._
 
-- Automatikus WooCommerce REST API-kulcs-létrehozás (nem kell manuálisan másolni a kulcsokat)
-- A hitelesítési adatok titkosítva csak a Haszno szerveren tárolódnak — a WordPress-adatbázisban NEM maradnak
-- Kapcsolat állapotának megjelenítése (Kapcsolva / Hiba / Nincs kapcsolva)
-- Lecsatlakozás gomb (a WC API-kulcs azonnali törlésével)
-- Teljes eltávolításkor minden beállítás és kulcs törlődik
+The **Haszno Összekötő** ("Haszno Connector") WordPress plugin connects a WooCommerce store to the Haszno dropshipping system with a single connection code:
 
-## Telepítés
+- Automatic WooCommerce REST API key creation (no copying keys by hand)
+- Credentials are stored encrypted on the Haszno server only — they do NOT remain in the WordPress database
+- Connection status display (Connected / Error / Not connected)
+- Disconnect button (deletes the WC API key immediately)
+- On full uninstall all settings and keys are removed
 
-### ZIP-ből (ajánlott)
+The plugin's admin interface is in Hungarian.
 
-1. Töltsd le a legújabb `haszno-connector.zip` fájlt a Releases-ből.
-2. WordPress adminfelület → **Bővítmények → Új bővítmény → Zip feltöltése**
-3. Válaszd ki a zip fájlt és kattints az **Azonnali telepítés** gombra.
-4. Aktiváld a bővítményt.
-5. Menj a **WooCommerce → Beállítások → Integráció → Haszno Összekötő** oldalra.
+## Installation
 
-### Manuálisan
+### From a ZIP (recommended)
+
+1. Download the latest `haszno-connector.zip` from Releases.
+2. WordPress admin → **Plugins → Add New → Upload Plugin**
+3. Choose the zip file and click **Install Now**.
+4. Activate the plugin.
+5. Go to **WooCommerce → Settings → Integration → Haszno Összekötő**.
+
+### Manually
 
 ```bash
 unzip haszno-connector.zip -d /wp-content/plugins/
 ```
 
-## Zip csomag elkészítése (fejlesztőknek)
+## Building the zip package (for developers)
 
 ```bash
 bash build.sh
-# Kimenet: dist/haszno-connector.zip
+# Output: dist/haszno-connector.zip
 ```
 
-Követelmények: `bash`, `zip`, `rsync`. Ha `php` is elérhető, a build automatikusan lefuttatja a szintaktikai ellenőrzést minden PHP fájlon.
+Requirements: `bash`, `zip`, `rsync`. If `php` is available, the build automatically runs a syntax check on every PHP file.
 
-## Szükséges PHP verzió
+## Required PHP version
 
 PHP 7.4+, WordPress 5.8+, WooCommerce 7.0+
 
-## Licenc
+## License
 
-GPL-2.0-or-later — lásd [LICENSE](./LICENSE).
+GPL-2.0-or-later — see [LICENSE](./LICENSE).
 
 The Haszno platform itself (haszno.hu) is a commercial service. This plugin is open-source under the GPL so it can be freely audited, forked, and distributed alongside WooCommerce.
