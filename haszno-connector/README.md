@@ -1,93 +1,95 @@
-# Haszno Összekötő — WooCommerce bővítmény
+# Haszno Összekötő — WooCommerce plugin
 
-Automatikusan összeköti a WooCommerce webáruházat a [Haszno](https://haszno.hu) dropshipping platformmal.
+**English** | [Magyar](README.hu.md)
 
-## Funkciók
+Automatically connects a WooCommerce store to the [Haszno](https://haszno.hu) dropshipping platform. ("Haszno Összekötő" means "Haszno Connector"; the plugin's admin interface is in Hungarian.)
 
-- **Egyszer használatos kapcsolódási kód** — Nem kell kézzel másolni API-kulcsokat. A Haszno irányítópultján generált egyszeri kódot kell beilleszteni, a bővítmény mindent elvégez automatikusan.
-- **Automatikus WC REST API-kulcs-létrehozás** — A bővítmény létrehozza a szükséges `read_write` jogosultságú WooCommerce REST API-kulcspárt, és biztonságosan elküldi a Haszno API-nak.
-- **Titkos adatok NEM tárolódnak WordPress-ben** — A WooCommerce fogyasztói kulcs és titkos kulcs értéke nem kerül a WordPress-adatbázisba; csak a Haszno platform tárolja, titkosítva (AES-256-GCM).
-- **Kapcsolat állapotának megjelenítése** — Zöld / piros jelzés a WooCommerce → Beállítások → Integráció oldalon.
-- **Lecsatlakozás gomb** — Egy gombnyomással megszakítható a kapcsolat; a létrehozott WC API-kulcs azonnal törlődik.
-- **Teljes eltávolítás** — Törléskor az összes beállítás és a WC API-kulcs törlődik.
+## Features
 
-## Rendszerkövetelmények
+- **One-time connection code** — No copying API keys by hand. Paste the one-time code generated on the Haszno dashboard and the plugin does the rest.
+- **Automatic WC REST API key creation** — The plugin creates the required WooCommerce REST API key pair with `read_write` permission and sends it securely to the Haszno API.
+- **Secrets are NOT stored in WordPress** — The WooCommerce consumer key and consumer secret never reach the WordPress database; only the Haszno platform stores them, encrypted (AES-256-GCM).
+- **Connection status display** — Green / red indicator on the WooCommerce → Settings → Integration page.
+- **Disconnect button** — One click ends the connection; the WC API key that was created is deleted immediately.
+- **Full uninstall** — On deletion all settings and the WC API key are removed.
 
-| Komponens | Minimális verzió |
+## Requirements
+
+| Component | Minimum version |
 |---|---|
 | PHP | 7.4 |
 | WordPress | 5.8 |
 | WooCommerce | 7.0 |
 
-## Telepítés
+## Installation
 
-### Zip-ből (ajánlott)
+### From a zip (recommended)
 
 ```bash
-# Zip elkészítése (a repó gyökeréből)
+# Build the zip (from the repository root)
 cd integrations/woocommerce-plugin
 bash build.sh
 ```
 
-A `dist/haszno-connector.zip` fájlt töltsd fel a WordPress adminfelületen:
-**Bővítmények → Új bővítmény → Zip feltöltése**.
+Upload `dist/haszno-connector.zip` in the WordPress admin:
+**Plugins → Add New → Upload Plugin**.
 
-### Fejlesztői (szimlink / manuális)
+### Development (symlink / manual)
 
 ```bash
 ln -s /path/to/haszno-connector /path/to/wordpress/wp-content/plugins/haszno-connector
 ```
 
-## Első beállítás
+## First-time setup
 
-1. Aktiváld a bővítményt a WordPress adminfelületen.
-2. Menj a **WooCommerce → Beállítások → Integráció → Haszno Összekötő** oldalra.
-3. A Haszno irányítópultján ([app.haszno.hu](https://app.haszno.hu)) a **Bolt bekötése** menüpontban generálj kapcsolódási kódot.
-4. Illeszd be a kódot a **Kapcsolódási kód** mezőbe.
-5. Kattints a **Változtatások mentése** gombra.
-6. Ha minden rendben, a státusz **Kapcsolva** lesz.
+1. Activate the plugin in the WordPress admin.
+2. Go to **WooCommerce → Settings → Integration → Haszno Összekötő**.
+3. On the Haszno dashboard ([app.haszno.hu](https://app.haszno.hu)) generate a connection code under **Bolt bekötése** ("Connect a store").
+4. Paste the code into the **Kapcsolódási kód** ("Connection code") field.
+5. Click **Save changes**.
+6. If everything is fine, the status becomes **Kapcsolva** ("Connected").
 
-## Kapcsolódási folyamat (technikai részletek)
+## Connection flow (technical details)
 
-A bővítmény a következő lépéseket hajtja végre mentéskor:
+On save the plugin performs these steps:
 
 ```
-1. WC REST API-kulcspár létrehozása (ck_… / cs_…, read_write, jelenlegi admin felhasználóhoz)
-2. POST /api/connect/stores  { platform: "woocommerce", name: "<bolt neve>" }
-   → Haszno bolt-kapcsolat létrehozása, ID visszakapva
-3. PUT  /api/connect/stores/:id/domain  { domain: "<bolt domainje>" }
+1. Create a WC REST API key pair (ck_… / cs_…, read_write, for the current admin user)
+2. POST /api/connect/stores  { platform: "woocommerce", name: "<store name>" }
+   → creates the Haszno store connection, returns its ID
+3. PUT  /api/connect/stores/:id/domain  { domain: "<store domain>" }
 4. PUT  /api/connect/stores/:id/credentials  { credentials: { consumerKey, consumerSecret } }
-   → Titkosítva tárolódik a Haszno szerveren; a bővítmény nem menti el
+   → stored encrypted on the Haszno server; the plugin does not save it
 5. POST /api/connect/stores/:id/test
-   → Kapcsolat tesztelése
+   → tests the connection
 ```
 
-A `x-api-key` fejlécben a kapcsolódási kód kerül elküldésre (egyszer használatos Bearer-token).
+The connection code is sent in the `x-api-key` header (a one-time Bearer token).
 
-## Tárolt WordPress-opciók
+## Stored WordPress options
 
-| Opció neve | Tartalom |
+| Option name | Contents |
 |---|---|
-| `haszno_connector_api_url` | Haszno API alap URL |
-| `haszno_connector_status` | `nincs_kapcsolva` \| `kapcsolva` \| `hiba` |
-| `haszno_connector_store_id` | Haszno bolt-kapcsolat azonosítója (int) |
-| `haszno_connector_store_name` | Haszno-ban rögzített bolt neve |
-| `haszno_connector_error` | Utolsó hibaüzenet (ha volt) |
-| `haszno_connector_wc_key_id` | A létrehozott WC API-kulcs DB-azonosítója (törléshez) |
+| `haszno_connector_api_url` | Haszno API base URL |
+| `haszno_connector_status` | `nincs_kapcsolva` \| `kapcsolva` \| `hiba` (not connected \| connected \| error) |
+| `haszno_connector_store_id` | ID of the Haszno store connection (int) |
+| `haszno_connector_store_name` | Store name recorded in Haszno |
+| `haszno_connector_error` | Last error message (if any) |
+| `haszno_connector_wc_key_id` | DB ID of the WC API key that was created (for deletion) |
 
-**Nem tárolt adatok:** kapcsolódási kód, WC `consumer_key`, WC `consumer_secret`.
+**Not stored:** connection code, WC `consumer_key`, WC `consumer_secret`.
 
-## A connect-agent által implementálandó (open issue)
+## To be implemented by the connect-agent (open issue)
 
-A bővítmény az alábbi Haszno API-végpontokat hívja. A `connect-agent` feladata ezek teljes implementációja (`api/src/connect/routes.ts`, jelenleg 501 stub-ok):
+The plugin calls the Haszno API endpoints below. Implementing them fully is the `connect-agent`'s task (`api/src/connect/routes.ts`, currently 501 stubs):
 
-| Végpont | Mikor hívja a bővítmény | Megjegyzés |
+| Endpoint | When the plugin calls it | Note |
 |---|---|---|
-| `POST /api/connect/stores` | Kapcsolódáskor (1. lépés) | A `x-api-key` fejlécben érkező kapcsolódási kód authentikálja a kérést. A kód egyszeri érvényű token; a connect-agent feladata a tokenvalidáció és a tenanthoz rendelés. |
-| `PUT /api/connect/stores/:id/domain` | Kapcsolódáskor (2. lépés) | A domain SSRF-ellenőrzése a connect-agent felelőssége (`isValidPublicHostname`). |
-| `PUT /api/connect/stores/:id/credentials` | Kapcsolódáskor (3. lépés) | A `{credentials: {consumerKey, consumerSecret}}` értéket `encryptSecret()` segítségével titkosítva kell tárolni; soha nem szabad visszaadni API-válaszban. |
-| `POST /api/connect/stores/:id/test` | Kapcsolódáskor (4. lépés) | A WooCommerce adaptert kell meghívni a tárolt titkosított hitelesítési adatokkal. |
-| `GET /api/connect/stores/:id` | Állapot-lekérdezéskor | Csak státusz és metaadatok visszaadása; `credentials_enc` soha. |
+| `POST /api/connect/stores` | On connect (step 1) | The connection code in the `x-api-key` header authenticates the request. The code is a single-use token; validating it and assigning it to a tenant is the connect-agent's job. |
+| `PUT /api/connect/stores/:id/domain` | On connect (step 2) | SSRF-checking the domain is the connect-agent's responsibility (`isValidPublicHostname`). |
+| `PUT /api/connect/stores/:id/credentials` | On connect (step 3) | The `{credentials: {consumerKey, consumerSecret}}` value must be stored encrypted with `encryptSecret()`; it must never be returned in an API response. |
+| `POST /api/connect/stores/:id/test` | On connect (step 4) | Call the WooCommerce adapter with the stored encrypted credentials. |
+| `GET /api/connect/stores/:id` | On status query | Return status and metadata only; never `credentials_enc`. |
 
 ## Build script
 
@@ -97,6 +99,6 @@ bash build.sh
 # → dist/haszno-connector.zip
 ```
 
-## Licenc
+## License
 
 GPLv2 or later — https://www.gnu.org/licenses/gpl-2.0.html
