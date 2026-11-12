@@ -45,4 +45,4 @@ PHP 7.4+, WordPress 5.8+, WooCommerce 7.0+
 
 GPL-2.0-or-later — lásd [LICENSE](./LICENSE).
 
-The Haszno platform itself (haszno.hu) is a commercial service. This plugin is open-source under the GPL so it can be freely audited, forked, and distributed alongside WooCommerce.
+Maga a Haszno platform (haszno.hu) kereskedelmi szolgáltatás. Ez a bővítmény GPL alatt nyílt forráskódú, így szabadon átvizsgálható, forkolható és a WooCommerce mellett terjeszthető.

@@ -27,7 +27,6 @@ Automatically connects a WooCommerce store to the [Haszno](https://haszno.hu) dr
 
 ```bash
 # Build the zip (from the repository root)
-cd integrations/woocommerce-plugin
 bash build.sh
 ```
 
@@ -94,7 +93,6 @@ The plugin calls the Haszno API endpoints below. Implementing them fully is the 
 ## Build script
 
 ```bash
-cd integrations/woocommerce-plugin
 bash build.sh
 # → dist/haszno-connector.zip
 ```

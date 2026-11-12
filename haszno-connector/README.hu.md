@@ -27,7 +27,6 @@ Automatikusan összeköti a WooCommerce webáruházat a [Haszno](https://haszno.
 
 ```bash
 # Zip elkészítése (a repó gyökeréből)
-cd integrations/woocommerce-plugin
 bash build.sh
 ```
 
@@ -94,7 +93,6 @@ A bővítmény az alábbi Haszno API-végpontokat hívja. A `connect-agent` fela
 ## Build script
 
 ```bash
-cd integrations/woocommerce-plugin
 bash build.sh
 # → dist/haszno-connector.zip
 ```
